@@ -6,6 +6,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppDataSource = void 0;
 require("reflect-metadata");
 const typeorm_1 = require("typeorm");
+const Situations_1 = require("./entity/Situations");
+const Users_1 = require("./entity/Users");
 // Importar variáveis de ambientes
 const dotenv_1 = __importDefault(require("dotenv"));
 // Carregar as variáveis do .env
@@ -20,7 +22,11 @@ exports.AppDataSource = new typeorm_1.DataSource({
     database: process.env.DB_DATABASE || "nodeapi",
     synchronize: false,
     logging: true,
-    entities: [],
+    entities: [Situations_1.Situation, Users_1.User],
     subscribers: [],
     migrations: [__dirname + "/migration/*.js"],
 });
+// Inicializar a convexão com o BD
+exports.AppDataSource.initialize().then(() => {
+    console.log("Conexão com o banco de dados realizado com sucesso!");
+}).catch((error) => console.log("Erro com a conexão com o banco de dados!", error));
