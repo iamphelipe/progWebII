@@ -46,7 +46,7 @@ const router = express.Router()
 
   }catch(error){
       res.status(500).json({
-       message: 'Erro ao listar situação!',
+       message: 'Erro ao visualizar situação!',
      });
      return
   }
@@ -72,6 +72,44 @@ const router = express.Router()
      });
    }
  });
+
+// Editar a Visualização do item cadastrado em situação
+ router.put("/situations/:id", async(req: Request, res: Response) => {
+  
+  try {
+
+    const {id} = req.params;
+
+    var data = req.body;
+
+    const situationRepository = AppDataSource.getRepository(Situation);
+    const situation = await situationRepository.findOneBy({id: Number(id)})
+
+    if(!situation) {
+      res.status(404).json({
+        message: 'Situação não encontrada!',
+     });
+     return
+    }
+
+    //Atualiza os dados
+    situationRepository.merge(situation, data)
+
+    //Salvar as alterações de dados
+    const updateSituation = await situationRepository.save(situation)
+
+     res.status(200).json({
+       message: 'Situação atualizada com sucesso!',
+       situation: updateSituation,
+     });
+
+  }catch(error){
+      res.status(500).json({
+       message: 'Erro ao atualizar situação!',
+     });
+     return
+  }
+})
 
 // Exportar a instrução da rota
 
