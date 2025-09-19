@@ -6,9 +6,50 @@ import { Situation } from "../entity/Situations"
 // Criar a Aplicação Express
 const router = express.Router()
 
-// Criar a rota GET principal
- router.get("/situations", (req: Request, res: Response) => {
-   res.send("Bem vindo, pessoal! Tela de situations da rota!")
+// Criar a Lista
+ router.get("/situations", async(req: Request, res: Response) => {
+  
+  try {
+    const situationRepository = AppDataSource.getRepository(Situation);
+    const situations = await situationRepository.find()
+
+    res.status(200).json(situations)
+    return
+
+  }catch(error){
+      res.status(500).json({
+       message: 'Erro ao listar situação!',
+     });
+     return
+  }
+})
+
+// Criar a Visualização do item cadastrado em situação
+ router.get("/situations/:id", async(req: Request, res: Response) => {
+  
+  try {
+
+    const {id} = req.params;
+
+    const situationRepository = AppDataSource.getRepository(Situation);
+    const situation = await situationRepository.findOneBy({id: Number(id)})
+
+    if(!situation) {
+      res.status(404).json({
+        message: 'Situação não encontrada!',
+     });
+     return
+    }
+
+    res.status(200).json(situation)
+    return
+
+  }catch(error){
+      res.status(500).json({
+       message: 'Erro ao listar situação!',
+     });
+     return
+  }
 })
 
 // Criar a rota POST
